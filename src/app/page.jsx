@@ -1,9 +1,10 @@
 import Navbar from "@/components/home/Navbar";
 import Hero from "@/components/home/Hero";
-import Services from "@/components/home/Services";
+//import Services from "@/components/home/Services";
 import Doctors from "@/components/home/Doctors";
-import Features from "@/components/home/Features";
+//import Features from "@/components/home/Features";
 import Footer from "@/components/home/Footer";
+import ChatBot from "@/components/home/ChatBot"; 
 
 export default function HomePage() {
 
@@ -11,10 +12,11 @@ export default function HomePage() {
     <>
       <Navbar />
       <Hero />
-      <Services />
+      {/* <Services /> */}
       <Doctors />
-      <Features />
+      {/* <Features /> */}
       <Footer />
+      <ChatBot /> 
     </>
   );
 
