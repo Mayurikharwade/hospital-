@@ -1,143 +1,211 @@
 "use client";
 
-import { HeartPulse, Stethoscope, Calendar, UserCircle, ArrowRight, Hospital } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, Shield, Phone, ChevronLeft, ChevronRight, Star } from "lucide-react";
+
+// Reliable and professional hospital image links
+const slides = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1600&auto=format&fit=crop",
+    title: "Modern Hospital",
+    subtitle: "World-Class Facilities",
+    description: "Experience healthcare in a comfortable and technologically advanced environment, designed for optimal patient well-being.",
+    tag: "State-of-the-Art Clinical Center",
+    stats: { doctors: "120+", emergency: "24/7", experience: "18+" },
+    rating: "4.8",
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop",
+    title: "Compassionate Care",
+    subtitle: "Patient First",
+    description: "Our dedicated medical team provides personalized attention and emotional support at every step of your health journey.",
+    tag: "Patient-Centered Clinical Care",
+    stats: { doctors: "100+", emergency: "24/7", experience: "15+" },
+    rating: "4.9",
+  },
+  {
+    id: 3,
+    image: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1600&auto=format&fit=crop",
+    title: "Expert Specialists",
+    subtitle: "Certified Medical Team",
+    description: "Access a wide network of highly qualified doctors and specialists collaborating to deliver comprehensive medical solutions.",
+    tag: "Team of Renowned Specialists",
+    stats: { doctors: "200+", emergency: "24/7", experience: "25+" },
+    rating: "4.8",
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1600&auto=format&fit=crop",
+    title: "Advanced Diagnosis",
+    subtitle: "Modern Technology",
+    description: "Equipped with cutting-edge diagnostic tools and medical equipment for accurate results and precise treatment planning.",
+    tag: "Cutting-Edge Medical Technology",
+    stats: { doctors: "150+", emergency: "24/7", experience: "20+" },
+    rating: "4.9",
+  },
+  {
+    id: 5,
+    image: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1600&auto=format&fit=crop",
+    title: "24/7 Emergency",
+    subtitle: "Rapid Response Team",
+    description: "Round-the-clock emergency medical services with expert trauma teams and advanced life support capabilities.",
+    tag: "Always Available - 24/7",
+    stats: { doctors: "180+", emergency: "24/7", experience: "22+" },
+    rating: "4.8",
+  },
+];
 
 export default function Hero() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  // Set up automatic slide changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 6000); // 6 seconds per slide
+    return () => clearInterval(interval);
+  }, []);
+
+  // Ensure currentSlide is defined even before state update
+  const currentSlide = slides[currentIndex] || slides[0];
+
   return (
-    <section className="min-h-screen bg-gradient-to-br from-[#f0fdfa] via-white to-[#e6f7f5] py-10">
-      <div className="max-w-7xl mx-auto px-6 w-full">
-
-        {/* BIG BANNER - Sabse pehle dikhega */}
-        <div className="relative bg-gradient-to-r from-[#013A63] to-[#00A99D] rounded-3xl overflow-hidden shadow-2xl mb-10">
-          
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
+    // Height maintained at 480px for perfect balance
+    <div 
+      className="relative w-full overflow-hidden bg-slate-900 shadow-xl" 
+      style={{ height: "480px" }}
+    >
+      
+      {/* Background Image Slider with Fade Transition */}
+      <div className="absolute inset-0 z-0">
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${slide.image})` }}
+            ></div>
           </div>
-
-          <div className="relative p-8 md:p-12">
-            
-            {/* Banner Tag */}
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <HeartPulse className="w-4 h-4" />
-              Trusted Healthcare Platform
-            </div>
-
-            {/* Banner Main Content */}
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-              
-              {/* Left Side - Text */}
-              <div className="flex-1 text-center lg:text-left">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                  Your Health,
-                  <br />
-                  <span className="text-[#00A99D]">Our Priority</span>
-                </h1>
-                <p className="text-white/80 text-base md:text-lg max-w-xl mx-auto lg:mx-0 mb-6">
-                  Connect with experienced doctors, book appointments, and manage your healthcare easily.
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                  <button className="h-12 px-6 rounded-xl bg-white text-[#00A99D] font-semibold hover:bg-gray-100 transition-all flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    Book Appointment
-                  </button>
-                  <button className="h-12 px-6 rounded-xl bg-white/20 backdrop-blur text-white font-semibold hover:bg-white/30 transition-all flex items-center gap-2">
-                    <UserCircle className="w-4 h-4" />
-                    Find Doctors
-                  </button>
-                </div>
-              </div>
-
-              {/* Right Side - Stats */}
-              <div className="flex gap-8">
-                <div className="text-center bg-white/10 backdrop-blur rounded-2xl px-6 py-4">
-                  <p className="text-3xl font-bold text-white">100+</p>
-                  <p className="text-white/70 text-sm">Expert Doctors</p>
-                </div>
-                <div className="text-center bg-white/10 backdrop-blur rounded-2xl px-6 py-4">
-                  <p className="text-3xl font-bold text-white">5000+</p>
-                  <p className="text-white/70 text-sm">Happy Patients</p>
-                </div>
-                <div className="text-center bg-white/10 backdrop-blur rounded-2xl px-6 py-4">
-                  <p className="text-3xl font-bold text-white">24/7</p>
-                  <p className="text-white/70 text-sm">Support</p>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Doctors Row Inside Banner */}
-            <div className="mt-10 pt-6 border-t border-white/20">
-              <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-                <h3 className="text-white font-semibold text-lg">👨‍⚕️ Meet Our Expert Doctors</h3>
-                <button className="text-white/80 hover:text-white text-sm flex items-center gap-1">
-                  View All Doctors <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-              
-              <div className="flex flex-wrap justify-center gap-4">
-                {/* Doctor 1 */}
-                <div className="bg-white rounded-xl p-3 w-32 text-center hover:scale-105 transition cursor-pointer shadow-md">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-[#00A99D] to-[#013A63] rounded-full flex items-center justify-center mb-2">
-                    <Stethoscope className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-[#013A63] text-xs">Dr. Shruthika</h4>
-                  <p className="text-[#00A99D] text-[10px]">Cardiologist</p>
-                  <div className="text-yellow-500 text-[10px]">★★★★★ 4.9</div>
-                </div>
-
-                {/* Doctor 2 */}
-                <div className="bg-white rounded-xl p-3 w-32 text-center hover:scale-105 transition cursor-pointer shadow-md">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-[#00A99D] to-[#013A63] rounded-full flex items-center justify-center mb-2">
-                    <Stethoscope className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-[#013A63] text-xs">Dr. Rajesh</h4>
-                  <p className="text-[#00A99D] text-[10px]">Neurologist</p>
-                  <div className="text-yellow-500 text-[10px]">★★★★★ 4.8</div>
-                </div>
-
-                {/* Doctor 3 */}
-                <div className="bg-white rounded-xl p-3 w-32 text-center hover:scale-105 transition cursor-pointer shadow-md">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-[#00A99D] to-[#013A63] rounded-full flex items-center justify-center mb-2">
-                    <Stethoscope className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-[#013A63] text-xs">Dr. Priya</h4>
-                  <p className="text-[#00A99D] text-[10px]">Dermatologist</p>
-                  <div className="text-yellow-500 text-[10px]">★★★★★ 4.7</div>
-                </div>
-
-                {/* Doctor 4 */}
-                <div className="bg-white rounded-xl p-3 w-32 text-center hover:scale-105 transition cursor-pointer shadow-md">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-[#00A99D] to-[#013A63] rounded-full flex items-center justify-center mb-2">
-                    <Stethoscope className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-[#013A63] text-xs">Dr. Suresh</h4>
-                  <p className="text-[#00A99D] text-[10px]">Orthopedic</p>
-                  <div className="text-yellow-500 text-[10px]">★★★★★ 4.9</div>
-                </div>
-
-                {/* Doctor 5 */}
-                <div className="bg-white rounded-xl p-3 w-32 text-center hover:scale-105 transition cursor-pointer shadow-md">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-[#00A99D] to-[#013A63] rounded-full flex items-center justify-center mb-2">
-                    <Stethoscope className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-[#013A63] text-xs">Dr. Anjali</h4>
-                  <p className="text-[#00A99D] text-[10px]">Pediatrician</p>
-                  <div className="text-yellow-500 text-[10px]">★★★★★ 4.8</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Optional: Additional content after banner if needed */}
-        <div className="text-center">
-          <p className="text-slate-500 text-sm">🌟 Trusted by thousands of patients across India</p>
-        </div>
-
+        ))}
+        
+        {/* LIGHT OVERLAY: Blue gradient hata kar sirf left side pe halka black shadow rakha hai taaki text dikhe, baaki image clear rahegi */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent z-10"></div>
       </div>
-    </section>
+
+      {/* Slider Directional Arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/30 transition-all flex items-center justify-center text-white active:scale-95 group"
+      >
+        <ChevronLeft className="w-7 h-7 group-hover:-translate-x-0.5 transition-transform" />
+      </button>
+      
+      <button
+        onClick={nextSlide}
+        className="absolute right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/30 transition-all flex items-center justify-center text-white active:scale-95 group"
+      >
+        <ChevronRight className="w-7 h-7 group-hover:translate-x-0.5 transition-transform" />
+      </button>
+
+      {/* Pagination Dots Indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2.5">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`transition-all duration-300 ${
+              index === currentIndex
+                ? "w-10 h-2 bg-[#00A99D] rounded-full"
+                : "w-2.5 h-2.5 bg-white/40 rounded-full hover:bg-white/70"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Hero Interactive Content Section */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-10 h-full flex items-center justify-center lg:justify-start">
+        <div className="text-center lg:text-left max-w-xl">
+          
+          {/* Top trust validation tag */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-xs font-medium mb-5">
+            <Shield className="w-3.5 h-3.5 text-[#00A99D]" />
+            {currentSlide.tag}
+          </div>
+          
+          {/* High visibility typographic titles */}
+          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight leading-tight drop-shadow-md">
+            {currentSlide.title},
+            <br />
+            <span className="text-[#00A99D]">{currentSlide.subtitle}</span>
+          </h1>
+          
+          {/* Balanced paragraph descriptor */}
+          <p className="text-slate-100 text-sm lg:text-base mb-6 leading-relaxed drop-shadow-md">
+            {currentSlide.description}
+          </p>
+          
+          {/* Call to Action elements */}
+          <div className="flex flex-wrap gap-3 mb-6 justify-center lg:justify-start">
+            <button className="h-11 px-6 rounded-lg bg-[#00A99D] text-white text-sm font-semibold hover:bg-[#009488] active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-[#00A99D]/30">
+              <Calendar className="w-4 h-4" />
+              Book Appointment
+            </button>
+            <button className="h-11 px-6 rounded-lg bg-white/10 backdrop-blur border border-white/20 text-white text-sm font-semibold hover:bg-white/20 active:scale-95 transition-all flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              Call Specialist
+            </button>
+          </div>
+
+          {/* Operational metrics data grid */}
+          <div className="flex flex-wrap gap-6 justify-center lg:justify-start pt-3 border-t border-white/20">
+            <div>
+              <p className="text-2xl font-bold text-white drop-shadow-md">{currentSlide.stats.doctors}</p>
+              <p className="text-slate-200 text-[10px] font-semibold uppercase tracking-wider mt-0.5 drop-shadow-md">Expert Doctors</p>
+            </div>
+            <div className="w-px h-8 bg-white/30 self-center"></div>
+            <div>
+              <p className="text-2xl font-bold text-white drop-shadow-md">{currentSlide.stats.emergency}</p>
+              <p className="text-slate-200 text-[10px] font-semibold uppercase tracking-wider mt-0.5 drop-shadow-md">Emergency Care</p>
+            </div>
+            <div className="w-px h-8 bg-white/30 self-center"></div>
+            <div>
+              <p className="text-2xl font-bold text-white drop-shadow-md">{currentSlide.stats.experience}+</p>
+              <p className="text-slate-200 text-[10px] font-semibold uppercase tracking-wider mt-0.5 drop-shadow-md">Years Exp.</p>
+            </div>
+          </div>
+
+          {/* Patient review score integration */}
+          <div className="flex items-center gap-2.5 mt-5 justify-center lg:justify-start">
+            <div className="flex text-amber-400 gap-1 drop-shadow-md">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-current" />
+              ))}
+            </div>
+            <span className="text-white text-xs font-medium drop-shadow-md">
+              {currentSlide.rating} Verified Rating (1,400+ patient reviews)
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
   );
 }

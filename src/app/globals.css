@@ -1,4 +1,4 @@
-@import "tailwindcss";
+ @import "tailwindcss"; 
 
 html,
 body {
@@ -11,4 +11,8 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  overflow: auto;
 }
