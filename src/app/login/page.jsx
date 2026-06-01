@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 
-function LoginPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("user");
   const [showOtpField, setShowOtpField] = useState(false);
@@ -18,7 +18,6 @@ function LoginPage() {
   const [passwordError, setPasswordError] = useState("");
   const [otpError, setOtpError] = useState("");
 
-  // ✅ CREDENTIALS - Make sure these are EXACT
   const userCredentials = {
     identifier: "user@eashaop.com",
     password: "user123",
@@ -40,11 +39,6 @@ function LoginPage() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    
-    console.log("=== LOGIN ATTEMPT ===");
-    console.log("Active Tab:", activeTab);
-    console.log("Entered Identifier:", identifier);
-    console.log("Entered Password:", password);
     
     if (showOtpField) {
       if (!otp || otp.length < 4) {
@@ -68,40 +62,23 @@ function LoginPage() {
         return;
       }
       
-      // ✅ USER LOGIN
       if (activeTab === "user") {
-        console.log("User Credentials Expected:", userCredentials);
-        const isMatch = identifier === userCredentials.identifier && password === userCredentials.password;
-        console.log("User Match?", isMatch);
-        
-        if (isMatch) {
-          console.log("User login SUCCESS!");
+        if (identifier === userCredentials.identifier && password === userCredentials.password) {
           setIdentifierError("");
           setPasswordError("");
           router.push("/user/dashboard");
         } else {
-          console.log("User login FAILED");
           setPasswordError("Invalid email or password for User account");
         }
       } 
-      // ✅ DOCTOR LOGIN
       else {
-        console.log("Doctor Credentials Expected:", doctorCredentials);
-        // Trim any extra spaces
         const enteredIdentifier = identifier.trim();
         const enteredPassword = password.trim();
-        const isMatch = enteredIdentifier === doctorCredentials.identifier && enteredPassword === doctorCredentials.password;
-        console.log("Doctor Match?", isMatch);
-        
-        if (isMatch) {
-          console.log("Doctor login SUCCESS!");
+        if (enteredIdentifier === doctorCredentials.identifier && enteredPassword === doctorCredentials.password) {
           setIdentifierError("");
           setPasswordError("");
           router.push("/doctor/dashboard");
         } else {
-          console.log("Doctor login FAILED");
-          console.log(`Expected: ${doctorCredentials.identifier} / ${doctorCredentials.password}`);
-          console.log(`Received: ${enteredIdentifier} / ${enteredPassword}`);
           setPasswordError("Invalid email or password for Doctor account");
         }
       }
@@ -113,12 +90,15 @@ function LoginPage() {
       <div className="w-full max-w-[900px] mx-auto">
         <div className="flex flex-col md:flex-row bg-white rounded-[32px] shadow-2xl overflow-hidden min-h-[500px]">
           
-          {/* LEFT SIDE - DOCTOR IMAGE */}
-          <div className="hidden md:block w-1/2 relative bg-[#044a47]">
-            <img
+          {/* LEFT SIDE - DOCTOR IMAGE - Mobile pe bhi visible */}
+          <div className="w-full md:w-1/2 relative bg-[#044a47]">
+            <Image
               src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&h=650&fit=crop"
               alt="Doctor"
-              className="w-full h-full object-cover"
+              width={600}
+              height={650}
+              className="w-full h-48 md:h-full object-cover"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             <div className="absolute bottom-8 left-8 right-8 text-white">
@@ -131,7 +111,6 @@ function LoginPage() {
           {/* RIGHT SIDE - FORM */}
           <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center bg-white">
             
-            {/* Logo */}
             <div className="flex justify-center mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00A99D] to-[#013A63] flex items-center justify-center shadow-md overflow-hidden">
                 <Image src="/eAshalogo.png" alt="eAshaop" width={28} height={28} className="object-contain brightness-0 invert" />
@@ -142,7 +121,6 @@ function LoginPage() {
               Login to your account
             </h1>
 
-            {/* User/Doctor Tabs */}
             <div className="flex gap-2 mb-5">
               <button
                 type="button"
@@ -178,17 +156,15 @@ function LoginPage() {
               </button>
             </div>
 
-            {/* Demo Credentials Box */}
             <div className="mb-4 p-2 bg-blue-50 rounded-lg border border-blue-100 text-center">
               <p className="text-xs font-medium text-blue-700">
                 {activeTab === "user" 
-                  ? "User Credentials: user@eashaop.com / user123" 
-                  : "Doctor Credentials: doctor@eashaop.com / doctor123"}
+                  ? "User: user@eashaop.com / user123" 
+                  : "Doctor: doctor@eashaop.com / doctor123"}
               </p>
             </div>
 
             <form onSubmit={handleLogin}>
-              {/* Phone/Email Field */}
               <div className="mb-3">
                 <label className="block text-xs font-medium text-gray-700 mb-1">Phone Number or Email</label>
                 <input
@@ -201,7 +177,6 @@ function LoginPage() {
                 {identifierError && <p className="text-red-500 text-[10px] mt-1 ml-3">{identifierError}</p>}
               </div>
 
-              {/* Password Field */}
               {!showOtpField && (
                 <div className="mb-3">
                   <label className="block text-xs font-medium text-gray-700 mb-1">Password</label>
@@ -225,7 +200,6 @@ function LoginPage() {
                 </div>
               )}
 
-              {/* OTP Field */}
               {showOtpField && (
                 <div className="mb-3">
                   <label className="block text-xs font-medium text-gray-700 mb-1">Enter OTP</label>
@@ -244,10 +218,9 @@ function LoginPage() {
                 </div>
               )}
 
-              {/* Login with OTP & Forgot Password */}
               <div className="flex justify-between items-center mb-4">
                 <button type="button" onClick={() => setShowOtpField(!showOtpField)} className="text-[#00A99D] hover:underline text-xs">
-                  {showOtpField ? "Back to Password Login" : "Login with OTP"}
+                  {showOtpField ? "Back to Password" : "Login with OTP"}
                 </button>
                 {!showOtpField && (
                   <button type="button" className="text-[#00A99D] hover:underline text-xs" onClick={() => alert("Reset password link sent!")}>
@@ -256,18 +229,16 @@ function LoginPage() {
                 )}
               </div>
 
-              {/* Login Button */}
               <button type="submit" className="w-full bg-[#00A99D] text-white py-2 rounded-full font-semibold hover:bg-[#008b7a] transition text-sm">
                 Log in
               </button>
             </form>
 
-            {/* Bottom Links */}
             <div className="mt-4 text-center">
               <p className="text-center text-gray-500 text-[11px]">
-                Don't have an account? <Link href="/signup" className="text-[#00A99D] font-semibold">Sign up!</Link>
+                Don&apos;t have an account? <Link href="/signup" className="text-[#00A99D] font-semibold">Sign up!</Link>
               </p>
-              <Link href="/contact" className="text-gray-400 text-[11px] hover:text-[#00A99D]">Contact us</Link>
+              <Link href="/about#contact" className="text-gray-400 text-[11px] hover:text-[#00A99D]">Contact us</Link>
             </div>
           </div>
         </div>
@@ -275,5 +246,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

@@ -1,6 +1,8 @@
 "use client";
 
 import { Mail, Phone, MapPin, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -19,10 +21,12 @@ export default function Footer() {
           {/* Logo & About */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1.5">
-                <img 
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1.5 overflow-hidden">
+                <Image 
                   src="/eAshalogo.png" 
                   alt="eAshaop Logo" 
+                  width={40}
+                  height={40}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -39,29 +43,41 @@ export default function Footer() {
               <span className="w-1 h-5 bg-white rounded-full"></span> Quick Links
             </h3>
             <ul className="space-y-3 text-white/80 text-sm">
-              {['Home', 'Doctors', 'Services', 'About Us', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="group flex items-center hover:text-[#4ce0d7] transition-colors duration-300">
+              {[
+                { name: 'Home', href: '/' },
+                { name: 'Doctors', href: '/doctors' },
+                { name: 'Services', href: '/services' },
+                { name: 'About Us', href: '/about' },
+                { name: 'Contact', href: '/about#contact' }
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className="group flex items-center hover:text-[#4ce0d7] transition-colors duration-300">
                     <ChevronRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-[#4ce0d7]" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">{item}</span>
-                  </a>
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">{item.name}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Our Services */}
           <div>
             <h3 className="text-lg font-semibold mb-6 text-white flex items-center gap-2">
               <span className="w-1 h-5 bg-white rounded-full"></span> Our Services
             </h3>
             <ul className="space-y-3 text-white/80 text-sm">
-              {['Emergency Care', 'OPD Services', 'Pharmacy', 'Lab Tests', 'Health Checkup'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="group flex items-center hover:text-[#4ce0d7] transition-colors duration-300">
+              {[
+                { name: 'Emergency Care', href: '/services#emergency' },
+                { name: 'OPD Services', href: '/services#opd' },
+                { name: 'Pharmacy', href: '/services#pharmacy' },
+                { name: 'Lab Tests', href: '/services#lab-tests' },
+                { name: 'Health Checkup', href: '/services#health-checkup' }
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className="group flex items-center hover:text-[#4ce0d7] transition-colors duration-300">
                     <ChevronRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-[#4ce0d7]" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">{item}</span>
-                  </a>
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">{item.name}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -74,21 +90,18 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4 text-white/80 text-sm">
               <li className="flex items-start gap-3 group">
-                {/* White box for MapPin icon */}
                 <div className="p-2 bg-white rounded-lg shadow-sm group-hover:scale-110 transition-transform">
                   <MapPin className="w-4 h-4 text-[#00A99D]" />
                 </div>
                 <span className="mt-1">Hyderabad, Telangana, India</span>
               </li>
               <li className="flex items-center gap-3 group">
-                {/* White box for Phone icon */}
                 <div className="p-2 bg-white rounded-lg shadow-sm group-hover:scale-110 transition-transform">
                   <Phone className="w-4 h-4 text-[#00A99D]" />
                 </div>
                 <span>+91 98765 43210</span>
               </li>
               <li className="flex items-center gap-3 group">
-                {/* White box for Mail icon */}
                 <div className="p-2 bg-white rounded-lg shadow-sm group-hover:scale-110 transition-transform">
                   <Mail className="w-4 h-4 text-[#00A99D]" />
                 </div>
@@ -102,15 +115,14 @@ export default function Footer() {
 
       {/* --- BOTTOM BAR --- */}
       <div className="border-t border-white/20 bg-black/10">
-        {/* Changed padding 'py-5' to 'py-3' to reduce height */}
         <div className="max-w-7xl mx-auto px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/70 text-sm font-medium">
             © 2026 eAshaop Healthcare. All rights reserved.
           </p>
           <div className="flex flex-wrap gap-2 md:gap-4 text-white/80 text-sm font-medium">
-            <a href="#" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Privacy Policy</a>
-            <a href="#" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Terms of Service</a>
-            <a href="#" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Sitemap</a>
+            <Link href="/privacy" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Privacy Policy</Link>
+            <Link href="/terms" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Terms of Service</Link>
+            <Link href="/sitemap" className="px-4 py-2 rounded-full hover:bg-[#00A99D] hover:text-white transition-all">Sitemap</Link>
           </div>
         </div>
       </div>

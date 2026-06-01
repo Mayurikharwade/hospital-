@@ -2,6 +2,7 @@
 import { Apple } from "lucide-react";
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   HeartPulse, Shield, Clock, Video, Calendar, MessageCircle, 
   Stethoscope, Activity, Award, Users, Phone, ArrowRight, 
@@ -21,7 +22,6 @@ export default function DoctorsFeatures() {
       image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&h=300&fit=crop",
       features: ["24/7 Emergency", "NICU Facility", "Lamaze Classes", "High-Risk Pregnancy"],
       icon: HeartPulse,
-      link: "/doctors"
     },
     {
       title: "Gynecology",
@@ -31,7 +31,6 @@ export default function DoctorsFeatures() {
       image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=300&fit=crop",
       features: ["PCOS Treatment", "Menopause Care", "Annual Checkups", "Fertility Services"],
       icon: Heart,
-      link: "/doctors"
     },
     {
       title: "Surgeries",
@@ -41,7 +40,6 @@ export default function DoctorsFeatures() {
       image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=500&h=300&fit=crop",
       features: ["Laparoscopic", "Robotic Surgery", "Laser Treatment", "Fast Recovery"],
       icon: Activity,
-      link: "/doctors"
     },
   ];
 
@@ -77,15 +75,18 @@ export default function DoctorsFeatures() {
           </p>
         </div>
 
-        {/* Services Cards */}
+        {/* Services Cards - Learn More redirects to Login */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
           {services.map((service, idx) => (
             <div key={idx} className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-slate-100">
               <div className="relative h-48 overflow-hidden">
-                <img 
+                <Image 
                   src={service.image} 
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  width={500}
+                  height={300}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                 <div className={`absolute top-3 right-3 px-2 py-1 ${service.badgeColor} text-xs font-semibold rounded-full`}>
@@ -103,7 +104,8 @@ export default function DoctorsFeatures() {
                     <span key={i} className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full">{feature}</span>
                   ))}
                 </div>
-                <Link href={service.link} className="inline-flex items-center gap-1 text-[#00A99D] text-sm font-medium hover:gap-2 transition">
+                {/* Learn More - Login Page */}
+                <Link href="/login" className="inline-flex items-center gap-1 text-[#00A99D] text-sm font-medium hover:gap-2 transition">
                   Learn More <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -161,4 +163,3 @@ export default function DoctorsFeatures() {
     </section>
   );
 }
-

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Heart,
   Baby,
@@ -124,7 +125,7 @@ export default function FeaturedServices() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header - OUR SERVICES */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-[#00A99D]/10 px-4 py-1.5 rounded-full mb-4">
             <Heart className="w-4 h-4 text-[#00A99D]" />
             <span className="text-[#00A99D] font-semibold text-sm uppercase tracking-wide">
@@ -140,7 +141,7 @@ export default function FeaturedServices() {
         </div>
 
         {/* Modern Features Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {modernFeatures.map((feature) => (
             <div
               key={feature.id}
@@ -168,10 +169,13 @@ export default function FeaturedServices() {
               
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-2/5 relative overflow-hidden">
-                  <img
+                  <Image
                     src={service.image}
                     alt={service.title}
+                    width={400}
+                    height={300}
                     className="w-full h-48 md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized
                   />
                 </div>
 
@@ -194,8 +198,9 @@ export default function FeaturedServices() {
                     ))}
                   </div>
 
+                  {/* Learn More - Login Page */}
                   <Link
-                    href="#"
+                    href="/login"
                     className="inline-flex items-center gap-2 text-[#00A99D] font-semibold text-sm group/link hover:gap-3 transition-all"
                   >
                     Learn More
@@ -218,29 +223,25 @@ export default function FeaturedServices() {
             <h3 className="text-2xl md:text-3xl font-bold text-[#013A63]">What Our Patients Say</h3>
           </div>
 
-          {/* Reviews Grid - 4 cards in one row with profile images */}
+          {/* Reviews Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {reviews.map((review) => (
               <div
                 key={review.id}
                 className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 text-center"
               >
-                {/* Profile Image */}
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00A99D] to-[#013A63] flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                  <img 
+                  <Image 
                     src={review.image} 
                     alt={review.name} 
+                    width={64}
+                    height={64}
                     className="w-full h-full object-cover"
+                    unoptimized
                   />
                 </div>
-                
-                {/* Name */}
                 <h4 className="font-bold text-[#013A63]">{review.name}</h4>
-                
-                {/* Role */}
                 <p className="text-xs text-slate-400 mt-0.5 mb-2">{review.role}</p>
-                
-                {/* Stars */}
                 <div className="flex justify-center gap-0.5 mb-3">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -249,29 +250,27 @@ export default function FeaturedServices() {
                     />
                   ))}
                 </div>
-                
-                {/* Review Text */}
                 <p className="text-slate-600 text-sm leading-relaxed italic">
-                  "{review.review}"
+                  &quot;{review.review}&quot;
                 </p>
               </div>
             ))}
           </div>
           
-          {/* View All Reviews Button */}
+          {/* View All Reviews - Login Page */}
           <div className="text-center mt-6">
-            <button className="text-[#00A99D] font-semibold text-sm hover:underline inline-flex items-center gap-1">
+            <Link href="/login" className="text-[#00A99D] font-semibold text-sm hover:underline inline-flex items-center gap-1">
               Read all reviews
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            </Link>
           </div>
         </div>
 
-        {/* View All Services Button */}
+        {/* View All Services Button - Services Page */}
         <div className="text-center">
-          <button className="px-8 py-3 bg-gradient-to-r from-[#00A99D] to-[#009488] text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:-translate-y-0.5">
+          <Link href="/services" className="px-8 py-3 bg-gradient-to-r from-[#00A99D] to-[#009488] text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:-translate-y-0.5 inline-block">
             View All Services
-          </button>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,338 +1,205 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { 
-  ChevronLeft, 
-  User, 
-  Bell, 
-  Lock, 
-  Globe, 
-  Moon, 
-  Sun,
-  Mail,
-  Phone,
-  MapPin,
-  Languages,
+import {
+  Settings,
+  Bell,
+  Lock,
   Shield,
+  Globe,
+  ChevronLeft,
+  CheckCircle,
   Eye,
   EyeOff,
-  Save,
-  CheckCircle,
-  AlertCircle,
-  Sparkles,
-  Clock,
-  Calendar,
-  DollarSign,
-  CreditCard,
-  Smartphone,
-  Laptop,
-  LogOut
+  LogOut,
+  AlertTriangle,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const router = useRouter();
+  const [showSuccess, setShowSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-
-  // Settings State
-  const [settings, setSettings] = useState({
-    // Profile Settings
-    fullName: "Dr. Shruthika Reddy",
-    email: "shruthika@eashaop.com",
-    phone: "+91 98765 43210",
-    location: "Hyderabad, Telangana",
-    
-    // Notification Settings
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  
+  const [notifications, setNotifications] = useState({
+    appointmentReminders: true,
+    healthTips: true,
+    promotional: false,
     emailNotifications: true,
     smsNotifications: true,
-    appointmentReminders: true,
-    promotionalEmails: false,
-    
-    // Privacy Settings
-    twoFactorAuth: false,
-    profileVisibility: "private",
-    dataSharing: false,
-    
-    // Appearance
-    theme: "light",
-    fontSize: "medium",
-    
-    // Language
-    language: "english",
-    
-    // Consultation Settings
-    consultationFee: "1200",
-    consultationMode: "both",
-    bufferTime: "15",
-    
-    // Password Change
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
   });
 
-  const showNotification = (msg) => {
-    setToastMessage(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [language, setLanguage] = useState("english");
+
+  const showToast = (message) => {
+    setSuccessMessage(message);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  const handleSave = () => {
-    localStorage.setItem("doctor_settings", JSON.stringify(settings));
-    setIsEditing(false);
-    showNotification("Settings saved successfully! ✅");
+  const handleNotificationChange = (key) => {
+    setNotifications({ ...notifications, [key]: !notifications[key] });
+    showToast(`${key.replace(/([A-Z])/g, ' $1')} ${!notifications[key] ? 'enabled' : 'disabled'}`);
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    showNotification("Changes cancelled");
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
   };
 
-  const handleChangePassword = () => {
-    if (!settings.currentPassword) {
-      showNotification("Please enter current password");
+  const handleSavePassword = () => {
+    if (!passwordData.currentPassword) {
+      alert("Please enter current password");
       return;
     }
-    if (settings.newPassword !== settings.confirmPassword) {
-      showNotification("New passwords do not match");
+    if (!passwordData.newPassword) {
+      alert("Please enter new password");
       return;
     }
-    if (settings.newPassword.length < 6) {
-      showNotification("Password must be at least 6 characters");
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert("New password and confirm password do not match");
       return;
     }
-    showNotification("Password changed successfully! 🔒");
-    setSettings({
-      ...settings,
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    });
+    if (passwordData.newPassword.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    showToast("Password updated successfully!");
+    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
   };
 
-  useEffect(() => {
-    const saved = localStorage.getItem("doctor_settings");
-    if (saved) {
-      setSettings(JSON.parse(saved));
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    showToast(`Language changed to ${lang.charAt(0).toUpperCase() + lang.slice(1)}`);
+  };
+
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to logout?")) {
+      router.push("/login");
     }
-  }, []);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
-      
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-24 right-6 z-50 bg-emerald-500 text-white px-5 py-2.5 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 animate-in slide-in-from-top-2">
-          <Sparkles className="w-4 h-4" /> {toastMessage}
-        </div>
-      )}
-
-      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+      <div className="relative z-10 px-6 py-4">
         
+        {/* Success Toast */}
+        {showSuccess && (
+          <div className="fixed top-20 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-top-2">
+            <CheckCircle className="w-4 h-4" />
+            {successMessage}
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-[#013A63]">Settings</h1>
-              <p className="text-slate-500 text-sm">Manage your account preferences and configurations</p>
-            </div>
-            <div className="flex gap-3">
-              {isEditing ? (
-                <>
-                  <button 
-                    onClick={handleCancel}
-                    className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleSave}
-                    className="px-4 py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium hover:bg-[#009488] transition flex items-center gap-2"
-                  >
-                    <Save className="w-4 h-4" /> Save Changes
-                  </button>
-                </>
-              ) : (
-                <button 
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium hover:bg-[#009488] transition"
-                >
-                  Edit Settings
-                </button>
-              )}
-            </div>
+          <div className="flex items-center gap-2 mb-1">
+            <Settings className="w-5 h-5 text-[#00A99D]" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-[#013A63] to-[#00A99D] bg-clip-text text-transparent">
+              Settings
+            </h1>
           </div>
+          <p className="text-slate-500 text-sm ml-7">Manage your account preferences</p>
         </div>
 
         <div className="space-y-5">
           
-          {/* Profile Settings */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-              <h2 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-                <User className="w-4 h-4 text-[#00A99D]" /> Profile Information
-              </h2>
-            </div>
-            <div className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Full Name</label>
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      value={settings.fullName} 
-                      onChange={(e) => setSettings({...settings, fullName: e.target.value})}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-sm text-slate-800 font-medium">{settings.fullName}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Email Address</label>
-                  {isEditing ? (
-                    <input 
-                      type="email" 
-                      value={settings.email} 
-                      onChange={(e) => setSettings({...settings, email: e.target.value})}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-sm text-slate-800">{settings.email}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Phone Number</label>
-                  {isEditing ? (
-                    <input 
-                      type="tel" 
-                      value={settings.phone} 
-                      onChange={(e) => setSettings({...settings, phone: e.target.value})}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-sm text-slate-800">{settings.phone}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Location</label>
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      value={settings.location} 
-                      onChange={(e) => setSettings({...settings, location: e.target.value})}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-sm text-slate-800">{settings.location}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Notification Settings */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-              <h2 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-                <Bell className="w-4 h-4 text-[#00A99D]" /> Notification Preferences
-              </h2>
+              <h3 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
+                <Bell className="w-4 h-4 text-[#00A99D]" />
+                Notification Preferences
+              </h3>
             </div>
-            <div className="p-5 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="divide-y divide-slate-100">
+              <div className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Email Notifications</p>
-                  <p className="text-xs text-slate-400">Receive updates via email</p>
+                  <p className="font-medium text-slate-800 text-sm">Appointment Reminders</p>
+                  <p className="text-xs text-slate-400">Get reminders about your upcoming appointments</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={settings.emailNotifications} 
-                    onChange={(e) => setSettings({...settings, emailNotifications: e.target.checked})}
-                    disabled={!isEditing}
-                    className="sr-only peer"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-[#00A99D] peer-disabled:opacity-50 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
+                <button
+                  onClick={() => handleNotificationChange("appointmentReminders")}
+                  className={`w-11 h-6 rounded-full transition-all ${
+                    notifications.appointmentReminders ? "bg-[#00A99D]" : "bg-slate-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                    notifications.appointmentReminders ? "translate-x-5" : "translate-x-0.5"
+                  } mt-0.5`}></div>
+                </button>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">SMS Notifications</p>
-                  <p className="text-xs text-slate-400">Receive updates via SMS</p>
+                  <p className="font-medium text-slate-800 text-sm">Health Tips & Updates</p>
+                  <p className="text-xs text-slate-400">Receive daily health tips and wellness updates</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={settings.smsNotifications} 
-                    onChange={(e) => setSettings({...settings, smsNotifications: e.target.checked})}
-                    disabled={!isEditing}
-                    className="sr-only peer"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-[#00A99D] peer-disabled:opacity-50 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
+                <button
+                  onClick={() => handleNotificationChange("healthTips")}
+                  className={`w-11 h-6 rounded-full transition-all ${
+                    notifications.healthTips ? "bg-[#00A99D]" : "bg-slate-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                    notifications.healthTips ? "translate-x-5" : "translate-x-0.5"
+                  } mt-0.5`}></div>
+                </button>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Appointment Reminders</p>
-                  <p className="text-xs text-slate-400">Get reminders for upcoming appointments</p>
+                  <p className="font-medium text-slate-800 text-sm">Promotional Offers</p>
+                  <p className="text-xs text-slate-400">Get updates about offers and discounts</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={settings.appointmentReminders} 
-                    onChange={(e) => setSettings({...settings, appointmentReminders: e.target.checked})}
-                    disabled={!isEditing}
-                    className="sr-only peer"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-[#00A99D] peer-disabled:opacity-50 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
+                <button
+                  onClick={() => handleNotificationChange("promotional")}
+                  className={`w-11 h-6 rounded-full transition-all ${
+                    notifications.promotional ? "bg-[#00A99D]" : "bg-slate-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                    notifications.promotional ? "translate-x-5" : "translate-x-0.5"
+                  } mt-0.5`}></div>
+                </button>
               </div>
-            </div>
-          </div>
-
-          {/* Appearance Settings */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-              <h2 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-                <Globe className="w-4 h-4 text-[#00A99D]" /> Appearance & Language
-              </h2>
-            </div>
-            <div className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="p-4 flex items-center justify-between">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-2">Theme</label>
-                  <div className="flex gap-3">
-                    <button 
-                      onClick={() => isEditing && setSettings({...settings, theme: "light"})}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition ${settings.theme === "light" ? "border-[#00A99D] bg-[#00A99D]/5 text-[#00A99D]" : "border-slate-200 text-slate-600"}`}
-                      disabled={!isEditing}
-                    >
-                      <Sun className="w-4 h-4" /> Light
-                    </button>
-                    <button 
-                      onClick={() => isEditing && setSettings({...settings, theme: "dark"})}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition ${settings.theme === "dark" ? "border-[#00A99D] bg-[#00A99D]/5 text-[#00A99D]" : "border-slate-200 text-slate-600"}`}
-                      disabled={!isEditing}
-                    >
-                      <Moon className="w-4 h-4" /> Dark
-                    </button>
-                  </div>
+                  <p className="font-medium text-slate-800 text-sm">Email Notifications</p>
+                  <p className="text-xs text-slate-400">Receive notifications via email</p>
                 </div>
+                <button
+                  onClick={() => handleNotificationChange("emailNotifications")}
+                  className={`w-11 h-6 rounded-full transition-all ${
+                    notifications.emailNotifications ? "bg-[#00A99D]" : "bg-slate-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                    notifications.emailNotifications ? "translate-x-5" : "translate-x-0.5"
+                  } mt-0.5`}></div>
+                </button>
+              </div>
+              <div className="p-4 flex items-center justify-between">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-2">Language</label>
-                  <select 
-                    value={settings.language} 
-                    onChange={(e) => setSettings({...settings, language: e.target.value})}
-                    disabled={!isEditing}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none disabled:bg-slate-50"
-                  >
-                    <option value="english">English</option>
-                    <option value="hindi">Hindi</option>
-                    <option value="telugu">Telugu</option>
-                  </select>
+                  <p className="font-medium text-slate-800 text-sm">SMS Notifications</p>
+                  <p className="text-xs text-slate-400">Receive notifications via SMS</p>
                 </div>
+                <button
+                  onClick={() => handleNotificationChange("smsNotifications")}
+                  className={`w-11 h-6 rounded-full transition-all ${
+                    notifications.smsNotifications ? "bg-[#00A99D]" : "bg-slate-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                    notifications.smsNotifications ? "translate-x-5" : "translate-x-0.5"
+                  } mt-0.5`}></div>
+                </button>
               </div>
             </div>
           </div>
@@ -340,93 +207,151 @@ export default function SettingsPage() {
           {/* Change Password */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-              <h2 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#00A99D]" /> Change Password
-              </h2>
+              <h3 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#00A99D]" />
+                Change Password
+              </h3>
             </div>
-            <div className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Current Password</label>
-                  <div className="relative">
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      value={settings.currentPassword} 
-                      onChange={(e) => setSettings({...settings, currentPassword: e.target.value})}
-                      placeholder="Enter current password"
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none pr-10"
-                    />
-                    <button 
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Current Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Enter current password"
+                    className="w-full px-3 py-2 pr-10 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  />
+                  <button
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+                  </button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">New Password</label>
-                  <input 
-                    type="password" 
-                    value={settings.newPassword} 
-                    onChange={(e) => setSettings({...settings, newPassword: e.target.value})}
-                    placeholder="Enter new password"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Confirm New Password</label>
-                  <input 
-                    type="password" 
-                    value={settings.confirmPassword} 
-                    onChange={(e) => setSettings({...settings, confirmPassword: e.target.value})}
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">New Password</label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Enter new password (min 6 characters)"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Confirm New Password</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
                     placeholder="Confirm new password"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-[#00A99D] focus:outline-none"
+                    className="w-full px-3 py-2 pr-10 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
                   />
+                  <button
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+                  </button>
                 </div>
               </div>
-              <button 
-                onClick={handleChangePassword}
-                className="mt-4 px-4 py-2 rounded-lg bg-[#00A99D]/10 text-[#00A99D] text-sm font-medium hover:bg-[#00A99D] hover:text-white transition"
+              <button
+                onClick={handleSavePassword}
+                className="w-full py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium hover:bg-[#009488] transition"
               >
                 Update Password
               </button>
             </div>
           </div>
 
-          {/* Privacy Settings */}
+          {/* Language Preference */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-              <h2 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#00A99D]" /> Privacy & Security
-              </h2>
+              <h3 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
+                <Globe className="w-4 h-4 text-[#00A99D]" />
+                Language Preference
+              </h3>
             </div>
-            <div className="p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Two-Factor Authentication</p>
-                  <p className="text-xs text-slate-400">Add an extra layer of security</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={settings.twoFactorAuth} 
-                    onChange={(e) => setSettings({...settings, twoFactorAuth: e.target.checked})}
-                    disabled={!isEditing}
-                    className="sr-only peer"
-                  />
-                  <div className="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-[#00A99D] peer-disabled:opacity-50 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
+            <div className="p-4">
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: "english", label: "English" },
+                  { id: "hindi", label: "हिन्दी" },
+                  { id: "telugu", label: "తెలుగు" },
+                ].map((lang) => (
+                  <button
+                    key={lang.id}
+                    onClick={() => handleLanguageChange(lang.id)}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-lg transition ${
+                      language === lang.id
+                        ? "bg-[#00A99D]/10 border border-[#00A99D]"
+                        : "bg-slate-50 hover:bg-slate-100 border border-transparent"
+                    }`}
+                  >
+                    <span className="text-sm font-medium text-slate-700">{lang.label}</span>
+                    {language === lang.id && <CheckCircle className="w-3.5 h-3.5 text-[#00A99D]" />}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Account Security */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+              <h3 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#00A99D]" />
+                Account Security
+              </h3>
+            </div>
+            <div className="divide-y divide-slate-100">
+              <div className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-800 text-sm">Two-Factor Authentication</p>
+                  <p className="text-xs text-slate-400">Add an extra layer of security to your account</p>
+                </div>
+                <button
+                  onClick={() => showToast("2FA setup will be available soon")}
+                  className="px-4 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition"
+                >
+                  Enable
+                </button>
+              </div>
+              <div className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-800 text-sm">Login Activity</p>
+                  <p className="text-xs text-slate-400">View all devices where you're logged in</p>
+                </div>
+                <button
+                  onClick={() => showToast("Login activity feature coming soon")}
+                  className="px-4 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition"
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 text-red-600 font-semibold text-sm hover:bg-red-100 transition border border-red-200"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout from Account
+          </button>
         </div>
 
         {/* Back to Dashboard */}
-        <div className="mt-8 text-center">
-          <Link href="/doctor/dashboard" className="inline-flex items-center gap-1 text-sm text-[#00A99D] font-medium hover:gap-2 transition">
+        <div className="mt-6 text-center">
+          <Link href="/user/dashboard" className="inline-flex items-center gap-1 text-sm text-[#00A99D] font-medium hover:gap-2 transition">
             <ChevronLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { X, Star, Briefcase, MapPin, Activity, Clock, Calendar, User } from 'lucide-react';
 
 export default function DoctorModal({ isOpen, doctorData, onClose, onBook }) {
@@ -23,10 +24,13 @@ export default function DoctorModal({ isOpen, doctorData, onClose, onBook }) {
           <div className="absolute -bottom-12 left-6">
             <div className="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-xl relative z-10">
               {!imageError ? (
-                <img 
+                <Image 
                   src={doctorData.image} 
                   alt={doctorData.name} 
+                  width={96}
+                  height={96}
                   className="w-full h-full object-cover object-top"
+                  unoptimized
                   onError={() => setImageError(true)}
                 />
               ) : (

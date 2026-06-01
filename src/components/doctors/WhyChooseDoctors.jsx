@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function WhyChooseDoctors() {
@@ -18,10 +19,13 @@ export default function WhyChooseDoctors() {
         {/* Left Side: Image */}
         <div className="relative flex justify-center lg:justify-start order-2 lg:order-1">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#00A99D]/20 to-transparent blur-3xl rounded-full transform -translate-x-5 translate-y-10"></div>
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=800&auto=format&fit=crop"
             alt="Why Choose Us"
+            width={800}
+            height={600}
             className="relative w-full max-w-lg rounded-3xl object-cover shadow-2xl border-4 border-white"
+            unoptimized
           />
         </div>
 

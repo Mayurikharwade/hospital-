@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { 
   ChevronLeft, 
@@ -55,12 +55,31 @@ export default function BookingHistoryPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const itemsPerPage = 8;
+  const statusDropdownRef = useRef(null);
+
+  const statusOptions = [
+    { value: "all", label: "All Status" },
+    { value: "Completed", label: "Completed" },
+    { value: "Pending", label: "Pending" },
+    { value: "Cancelled", label: "Cancelled" },
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setIsStatusOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const showNotification = (message) => {
     setToastMessage(message);
@@ -69,6 +88,7 @@ export default function BookingHistoryPage() {
   };
 
   const getStatusCount = (status) => {
+    if (status === "all") return bookingsData.length;
     return bookingsData.filter(b => b.status === status).length;
   };
 
@@ -121,9 +141,14 @@ export default function BookingHistoryPage() {
     showNotification(`📧 Reminder sent to ${booking.patientName}`);
   };
 
+  const getSelectedLabel = () => {
+    const option = statusOptions.find(opt => opt.value === selectedStatus);
+    return option ? option.label : "All Status";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
-      {/* Toast Notification */}
+      
       {showToast && (
         <div className="fixed top-20 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm animate-in slide-in-from-top-2">
           {toastMessage}
@@ -143,60 +168,40 @@ export default function BookingHistoryPage() {
           <p className="text-slate-500 text-sm ml-7">View and manage all patient bookings</p>
         </div>
 
-        {/* Stats Cards - Compact Size */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-green-100 hover:shadow-md transition">
+          <div className="bg-white rounded-xl p-3 shadow-sm border border-green-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Completed</p>
-                  <p className="text-xl font-bold text-green-600">{getStatusCount("Completed")}</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><CheckCircle className="w-4 h-4 text-green-600" /></div>
+                <div><p className="text-[10px] text-slate-500">Completed</p><p className="text-xl font-bold text-green-600">{getStatusCount("Completed")}</p></div>
               </div>
               <TrendingUp className="w-3.5 h-3.5 text-green-400" />
             </div>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-amber-100 hover:shadow-md transition">
+          <div className="bg-white rounded-xl p-3 shadow-sm border border-amber-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Pending</p>
-                  <p className="text-xl font-bold text-amber-600">{getStatusCount("Pending")}</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center"><Clock className="w-4 h-4 text-amber-600" /></div>
+                <div><p className="text-[10px] text-slate-500">Pending</p><p className="text-xl font-bold text-amber-600">{getStatusCount("Pending")}</p></div>
               </div>
               <Activity className="w-3.5 h-3.5 text-amber-400" />
             </div>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-red-100 hover:shadow-md transition">
+          <div className="bg-white rounded-xl p-3 shadow-sm border border-red-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                  <XCircle className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Cancelled</p>
-                  <p className="text-xl font-bold text-red-600">{getStatusCount("Cancelled")}</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center"><XCircle className="w-4 h-4 text-red-600" /></div>
+                <div><p className="text-[10px] text-slate-500">Cancelled</p><p className="text-xl font-bold text-red-600">{getStatusCount("Cancelled")}</p></div>
               </div>
               <XCircle className="w-3.5 h-3.5 text-red-400" />
             </div>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-[#00A99D]/10 hover:shadow-md transition">
+          <div className="bg-white rounded-xl p-3 shadow-sm border border-[#00A99D]/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#00A99D]/10 flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-[#00A99D]" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Total</p>
-                  <p className="text-xl font-bold text-[#013A63]">{bookingsData.length}</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-[#00A99D]/10 flex items-center justify-center"><FileText className="w-4 h-4 text-[#00A99D]" /></div>
+                <div><p className="text-[10px] text-slate-500">Total</p><p className="text-xl font-bold text-[#013A63]">{bookingsData.length}</p></div>
               </div>
               <Calendar className="w-3.5 h-3.5 text-[#00A99D]" />
             </div>
@@ -213,7 +218,7 @@ export default function BookingHistoryPage() {
           </div>
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              {/* Search */}
+              {/* Search Input */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
@@ -221,9 +226,10 @@ export default function BookingHistoryPage() {
                   placeholder="Search Patients..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm bg-white"
                 />
               </div>
+              
               {/* Start Date */}
               <div className="relative">
                 <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -231,9 +237,10 @@ export default function BookingHistoryPage() {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm bg-white"
                 />
               </div>
+              
               {/* End Date */}
               <div className="relative">
                 <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -241,30 +248,50 @@ export default function BookingHistoryPage() {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm bg-white"
                 />
               </div>
-              {/* Status Filter */}
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm bg-white cursor-pointer"
-              >
-                <option value="all">All Status</option>
-                <option value="Completed">Completed</option>
-                <option value="Pending">Pending</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
+              
+              {/* Status Dropdown - No Blue Highlight */}
+              <div className="relative" ref={statusDropdownRef}>
+                <button
+                  onClick={() => setIsStatusOpen(!isStatusOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm hover:border-[#00A99D] transition-colors"
+                >
+                  <span className={selectedStatus === "all" ? "text-slate-400" : "text-slate-700"}>
+                    {getSelectedLabel()}
+                  </span>
+                  <svg className={`w-4 h-4 text-slate-400 transition-transform ${isStatusOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {isStatusOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1">
+                    {statusOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSelectedStatus(option.value);
+                          setIsStatusOpen(false);
+                        }}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 transition-colors text-slate-600"
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             
-            {/* Remove Filters Button */}
             {(searchTerm || startDate || endDate || selectedStatus !== "all") && (
               <div className="mt-3 flex justify-end">
-                <button
-                  onClick={handleResetFilters}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition"
+                <button 
+                  onClick={handleResetFilters} 
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition-colors"
                 >
-                  <X className="w-3 h-3" /> Remove Filters
+                  <X className="w-3.5 h-3.5" /> Clear all filters
                 </button>
               </div>
             )}
@@ -295,51 +322,17 @@ export default function BookingHistoryPage() {
                       <p className="text-xs text-slate-400">{booking.email}</p>
                     </td>
                     <td className="px-3 py-2.5 text-sm text-slate-600">{booking.phone}</td>
-                    <td className="px-3 py-2.5 text-sm text-slate-600">
-                      {new Date(booking.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </td>
+                    <td className="px-3 py-2.5 text-sm text-slate-600">{new Date(booking.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                     <td className="px-3 py-2.5 text-sm text-slate-600">{booking.time}</td>
-                    <td className="px-3 py-2.5">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${booking.type === "Video" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
-                        {booking.type}
-                      </span>
-                    </td>
+                    <td className="px-3 py-2.5"><span className={`text-xs px-2 py-0.5 rounded-full ${booking.type === "Video" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>{booking.type}</span></td>
                     <td className="px-3 py-2.5 text-sm font-semibold text-[#00A99D]">{booking.amount}</td>
-                    <td className="px-3 py-2.5">
-                      <span className={`inline-flex items-center gap-0.5 text-xs px-2 py-0.5 rounded-full ${statusColors[booking.status]}`}>
-                        {statusIcons[booking.status]} {booking.status}
-                      </span>
-                    </td>
+                    <td className="px-3 py-2.5"><span className={`inline-flex items-center gap-0.5 text-xs px-2 py-0.5 rounded-full ${statusColors[booking.status]}`}>{statusIcons[booking.status]} {booking.status}</span></td>
                     <td className="px-3 py-2.5">
                       <div className="flex items-center justify-center gap-1.5">
-                        <button 
-                          onClick={() => handleViewDetails(booking)} 
-                          className="p-1 rounded-lg hover:bg-slate-100 transition text-blue-500" 
-                          title="View Details"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDownloadInvoice(booking)} 
-                          className="p-1 rounded-lg hover:bg-slate-100 transition text-[#00A99D]" 
-                          title="Download Invoice"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handlePrint(booking)} 
-                          className="p-1 rounded-lg hover:bg-slate-100 transition text-slate-500" 
-                          title="Print"
-                        >
-                          <Printer className="w-3.5 h-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handleSendReminder(booking)} 
-                          className="p-1 rounded-lg hover:bg-slate-100 transition text-amber-500" 
-                          title="Send Reminder"
-                        >
-                          <Mail className="w-3.5 h-3.5" />
-                        </button>
+                        <button onClick={() => handleViewDetails(booking)} className="p-1.5 rounded-lg hover:bg-slate-100 transition text-blue-500"><Eye className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handleDownloadInvoice(booking)} className="p-1.5 rounded-lg hover:bg-slate-100 transition text-[#00A99D]"><Download className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handlePrint(booking)} className="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-500"><Printer className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handleSendReminder(booking)} className="p-1.5 rounded-lg hover:bg-slate-100 transition text-amber-500"><Mail className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -348,28 +341,13 @@ export default function BookingHistoryPage() {
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="px-4 py-2.5 border-t border-slate-100 flex items-center justify-between">
-              <p className="text-xs text-slate-500">
-                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredBookings.length)} of {filteredBookings.length} bookings
-              </p>
+              <p className="text-xs text-slate-500">Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredBookings.length)} of {filteredBookings.length} bookings</p>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-50 hover:bg-slate-50 transition"
-                >
-                  <ChevronLeftIcon className="w-4 h-4" />
-                </button>
+                <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-50 hover:bg-slate-50 transition"><ChevronLeftIcon className="w-4 h-4" /></button>
                 <span className="px-3 py-1.5 text-sm text-slate-600">{currentPage} / {totalPages}</span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-50 hover:bg-slate-50 transition"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-50 hover:bg-slate-50 transition"><ChevronRight className="w-4 h-4" /></button>
               </div>
             </div>
           )}
@@ -377,10 +355,7 @@ export default function BookingHistoryPage() {
 
         {/* Download Report Button */}
         <div className="mt-4 flex justify-end">
-          <button
-            onClick={handleDownloadReport}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium hover:bg-[#009488] transition"
-          >
+          <button onClick={handleDownloadReport} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium hover:bg-[#009488] transition">
             <Download className="w-4 h-4" /> Download Report
           </button>
         </div>
@@ -395,69 +370,32 @@ export default function BookingHistoryPage() {
 
       {/* Booking Details Modal */}
       {showModal && selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-slate-100 px-5 py-4 flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 px-5 py-4 flex items-center justify-between">
               <h3 className="font-bold text-[#013A63] text-lg">Booking Details</h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
-              </button>
+              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 transition"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A99D] to-[#013A63] flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
-                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A99D] to-[#013A63] flex items-center justify-center"><User className="w-5 h-5 text-white" /></div>
                 <div>
                   <h4 className="font-bold text-slate-800 text-base">{selectedBooking.patientName}</h4>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <Mail className="w-3 h-3 text-slate-400" />
-                    <p className="text-xs text-slate-500">{selectedBooking.email}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3 h-3 text-slate-400" />
-                    <p className="text-xs text-slate-500">{selectedBooking.phone}</p>
-                  </div>
+                  <div className="flex items-center gap-2 mt-0.5"><Mail className="w-3 h-3 text-slate-400" /><p className="text-xs text-slate-500">{selectedBooking.email}</p></div>
+                  <div className="flex items-center gap-2"><Phone className="w-3 h-3 text-slate-400" /><p className="text-xs text-slate-500">{selectedBooking.phone}</p></div>
                 </div>
               </div>
               <div className="bg-slate-50 rounded-lg p-3 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Doctor:</span>
-                  <span className="text-sm font-medium text-slate-700">{selectedBooking.doctor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Date:</span>
-                  <span className="text-sm font-medium text-slate-700">{new Date(selectedBooking.date).toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Time:</span>
-                  <span className="text-sm font-medium text-slate-700">{selectedBooking.time}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Type:</span>
-                  <span className="text-sm font-medium text-slate-700">{selectedBooking.type}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Amount:</span>
-                  <span className="text-lg font-bold text-[#00A99D]">{selectedBooking.amount}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-slate-500">Status:</span>
-                  <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${statusColors[selectedBooking.status]}`}>
-                    {statusIcons[selectedBooking.status]} {selectedBooking.status}
-                  </span>
-                </div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Doctor:</span><span className="text-sm font-medium text-slate-700">{selectedBooking.doctor}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Date:</span><span className="text-sm font-medium text-slate-700">{new Date(selectedBooking.date).toLocaleDateString()}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Time:</span><span className="text-sm font-medium text-slate-700">{selectedBooking.time}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Type:</span><span className="text-sm font-medium text-slate-700">{selectedBooking.type}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Amount:</span><span className="text-lg font-bold text-[#00A99D]">{selectedBooking.amount}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-slate-500">Status:</span><span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${statusColors[selectedBooking.status]}`}>{statusIcons[selectedBooking.status]} {selectedBooking.status}</span></div>
               </div>
               <div className="flex gap-3 pt-2">
-                <button 
-                  onClick={() => { handleDownloadInvoice(selectedBooking); setShowModal(false); }}
-                  className="flex-1 py-2 rounded-lg bg-[#00A99D] text-white text-sm font-medium flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" /> Invoice
-                </button>
-                <button onClick={() => setShowModal(false)} className="flex-1 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium">
-                  Close
-                </button>
+                <button onClick={() => { handleDownloadInvoice(selectedBooking); setShowModal(false); }} className="flex-1 py-2 rounded-lg bg-gradient-to-r from-[#00A99D] to-[#009488] text-white text-sm font-medium flex items-center justify-center gap-2 hover:shadow-md transition"><Download className="w-4 h-4" /> Download Invoice</button>
+                <button onClick={() => setShowModal(false)} className="flex-1 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition">Close</button>
               </div>
             </div>
           </div>

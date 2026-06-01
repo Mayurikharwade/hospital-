@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, Star, Briefcase, Calendar, Eye, Clock, Activity, User, Heart, Brain, Bone, Baby, Stethoscope } from "lucide-react";
 
 export default function DoctorsGrid({ doctors, onViewDetails, onBookAppointment }) {
@@ -41,10 +43,9 @@ export default function DoctorsGrid({ doctors, onViewDetails, onBookAppointment 
   }
 
   return (
-    // Yahan se mt-4 hata kar mt-0 kar diya hai
     <div className="mt-0 mb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      {/* --- Doctors Grid --- */}
+      {/* Doctors Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {doctors.map((doctor) => (
           <div key={doctor.id} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 border border-slate-100">
@@ -53,10 +54,13 @@ export default function DoctorsGrid({ doctors, onViewDetails, onBookAppointment 
             <div className="relative h-56 overflow-hidden flex-shrink-0">
               <div className={`absolute inset-0 bg-gradient-to-br ${getSpecialistColor(doctor.specialist)} opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-10`}></div>
               {!imageErrors[doctor.id] ? (
-                <img
+                <Image
                   src={doctor.image}
                   alt={doctor.name}
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  unoptimized
                   onError={() => setImageErrors(prev => ({ ...prev, [doctor.id]: true }))}
                 />
               ) : (
@@ -100,20 +104,20 @@ export default function DoctorsGrid({ doctors, onViewDetails, onBookAppointment 
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - Redirect to Login */}
               <div className="flex gap-2 mt-auto pt-2 border-t border-slate-50">
-                <button 
-                  onClick={() => onBookAppointment(doctor)}
+                <Link 
+                  href="/login"
                   className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#00A99D] to-[#009488] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#00A99D]/30 transition-all flex items-center justify-center gap-1.5"
                 >
                   <Calendar className="w-3.5 h-3.5" /> Book
-                </button>
-                <button 
-                  onClick={() => onViewDetails(doctor)}
+                </Link>
+                <Link 
+                  href="/login"
                   className="flex-1 h-10 rounded-xl border-2 border-slate-200 text-slate-600 text-sm font-semibold hover:bg-[#00A99D]/10 hover:border-[#00A99D] hover:text-[#00A99D] transition-all flex items-center justify-center gap-1.5"
                 >
                   <Eye className="w-3.5 h-3.5" /> Profile
-                </button>
+                </Link>
               </div>
             </div>
             

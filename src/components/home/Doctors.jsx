@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { 
   Search, 
   MapPin, 
@@ -136,7 +138,7 @@ const specialties = [
 
 const locations = ["All Locations", "Hyderabad", "Mumbai", "Chennai", "Bangalore", "Delhi"];
 
-// Custom Dropdown Component
+// Custom Dropdown Component - Rounded-full
 const CustomDropdown = ({ options, value, onChange, icon: Icon, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -154,11 +156,11 @@ const CustomDropdown = ({ options, value, onChange, icon: Icon, placeholder }) =
   return (
     <div className="relative group w-full" ref={dropdownRef}>
       <div 
-        className="flex items-center w-full pl-4 pr-4 py-3 rounded-xl border border-slate-200 bg-white cursor-pointer hover:border-[#00A99D] transition-all focus-within:ring-2 focus-within:ring-[#00A99D]/20 shadow-sm"
+        className="flex items-center w-full pl-10 pr-4 py-2.5 rounded-full border border-slate-200 bg-white cursor-pointer hover:border-[#00A99D] transition-all focus-within:ring-2 focus-within:ring-[#00A99D]/20 shadow-sm"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Icon className="w-4 h-4 text-slate-400 group-hover:text-[#00A99D] transition-colors" />
-        <span className={`flex-1 ml-3 text-sm truncate ${value === placeholder ? 'text-slate-400' : 'text-slate-700'}`}>
+        <span className={`flex-1 ml-2 text-sm truncate ${value === placeholder ? 'text-slate-400' : 'text-slate-700'}`}>
           {value}
         </span>
         <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#00A99D]' : ''}`} />
@@ -194,13 +196,10 @@ export default function Doctors() {
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showAppointmentToast, setShowAppointmentToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
-    // Simulate loading
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
@@ -216,12 +215,6 @@ export default function Doctors() {
   const handleViewDetails = (doctor) => {
     setSelectedDoctor(doctor);
     setShowModal(true);
-  };
-
-  const handleBookAppointment = (doctor) => {
-    setToastMessage(`✓ Appointment request sent to ${doctor.name} (${doctor.specialist}). Our team will contact you within 24 hours.`);
-    setShowAppointmentToast(true);
-    setTimeout(() => setShowAppointmentToast(false), 3000);
   };
 
   const getSpecialistIcon = (specialist) => {
@@ -260,25 +253,15 @@ export default function Doctors() {
 
   return (
     <section className="py-12 md:py-16 bg-gradient-to-br from-[#f8fafc] via-white to-[#f0f9f6] min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Toast Notification */}
-        {showAppointmentToast && (
-          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="bg-[#00A99D] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium">
-              <Calendar className="w-4 h-4" />
-              {toastMessage}
-            </div>
-          </div>
-        )}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-[#00A99D]/10 px-4 py-1.5 rounded-full mb-4">
             <Heart className="w-4 h-4 text-[#00A99D]" />
             <span className="text-[#00A99D] font-semibold text-sm uppercase tracking-wider">Our Team</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#013A63] mt-2 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#013A63] mt-2 mb-3">
             Meet Our Expert Doctors
           </h2>
           <p className="text-slate-500 max-w-2xl mx-auto text-base">
@@ -286,9 +269,9 @@ export default function Doctors() {
           </p>
         </div>
 
-        {/* Search & Filters - Modern Design with Custom Dropdowns */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-slate-100 mb-8 z-30 relative">
-          <div className="grid md:grid-cols-3 gap-4">
+        {/* Search & Filters */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <div className="grid md:grid-cols-3 gap-3">
             <div className="relative group w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#00A99D] transition-colors" />
               <input
@@ -296,7 +279,7 @@ export default function Doctors() {
                 placeholder="Search doctors by name or specialty..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00A99D] focus:ring-2 focus:ring-[#00A99D]/20 transition-all text-sm bg-white shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-full border border-slate-200 focus:outline-none focus:border-[#00A99D] focus:ring-2 focus:ring-[#00A99D]/20 transition-all text-sm bg-white shadow-sm"
               />
             </div>
             
@@ -318,7 +301,7 @@ export default function Doctors() {
           </div>
         </div>
 
-        {/* Specialty Chips - Modern Scrollable */}
+        {/* Specialty Chips */}
         <div className="flex flex-wrap gap-2 justify-center mb-10">
           {specialties.map((spec) => (
             <button
@@ -335,21 +318,23 @@ export default function Doctors() {
           ))}
         </div>
 
-        {/* Doctors Grid - Original Cards with Perfect Size & Fonts */}
+        {/* Doctors Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredDoctors.map((doctor) => (
             <div
               key={doctor.id}
               className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-slate-100"
             >
-              {/* Doctor Image with Gradient Overlay */}
               <div className="relative h-56 overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-br ${getSpecialistColor(doctor.specialist)} opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-10`}></div>
                 {!imageErrors[doctor.id] ? (
-                  <img
+                  <Image
                     src={doctor.image}
                     alt={doctor.name}
+                    width={400}
+                    height={400}
                     className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
+                    unoptimized
                     onError={() => setImageErrors(prev => ({ ...prev, [doctor.id]: true }))}
                   />
                 ) : (
@@ -358,20 +343,17 @@ export default function Doctors() {
                   </div>
                 )}
                 
-                {/* Rating Badge */}
                 <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md z-20">
                   <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
                   <span className="text-xs font-bold text-slate-700">{doctor.rating}</span>
                 </div>
 
-                {/* Specialist Badge */}
                 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-[#013A63] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-md z-20">
                   {getSpecialistIcon(doctor.specialist)}
                   <span>{doctor.specialist}</span>
                 </div>
               </div>
 
-              {/* Doctor Details - Restored original styling */}
               <div className="p-4">
                 <h3 className="text-lg font-bold text-[#013A63] mb-1 line-clamp-1">
                   {doctor.name}
@@ -399,15 +381,14 @@ export default function Doctors() {
                   </div>
                 </div>
 
-                {/* Two Buttons: Book Appointment & View Details */}
                 <div className="flex gap-2">
-                  <button 
-                    onClick={() => handleBookAppointment(doctor)}
+                  <Link 
+                    href="/login"
                     className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#00A99D] to-[#009488] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#00A99D]/30 transition-all duration-300 flex items-center justify-center gap-1.5"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     Book Now
-                  </button>
+                  </Link>
                   <button 
                     onClick={() => handleViewDetails(doctor)}
                     className="flex-1 h-10 rounded-xl border-2 border-slate-200 text-slate-600 text-sm font-semibold hover:bg-[#00A99D]/10 hover:border-[#00A99D] hover:text-[#00A99D] transition-all duration-300 flex items-center justify-center gap-1.5"
@@ -442,7 +423,7 @@ export default function Doctors() {
         )}
       </div>
 
-      {/* View Details Modal - Restored Original Design */}
+      {/* View Details Modal */}
       {showModal && selectedDoctor && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-300 shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -450,10 +431,13 @@ export default function Doctors() {
               <div className="absolute -bottom-12 left-6">
                 <div className="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-xl">
                   {!imageErrors[`modal-${selectedDoctor.id}`] ? (
-                    <img 
+                    <Image 
                       src={selectedDoctor.image} 
                       alt={selectedDoctor.name} 
+                      width={96}
+                      height={96}
                       className="w-full h-full object-cover object-top"
+                      unoptimized
                       onError={() => setImageErrors(prev => ({ ...prev, [`modal-${selectedDoctor.id}`]: true }))}
                     />
                   ) : (
@@ -496,15 +480,12 @@ export default function Doctors() {
               </div>
               
               <div className="flex gap-3 mt-6">
-                <button 
-                  onClick={() => { 
-                    handleBookAppointment(selectedDoctor); 
-                    setShowModal(false); 
-                  }} 
+                <Link 
+                  href="/login"
                   className="flex-1 h-12 rounded-xl bg-gradient-to-r from-[#00A99D] to-[#009488] text-white font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all"
                 >
                   <Calendar className="w-4 h-4" /> Book Appointment
-                </button>
+                </Link>
                 <button 
                   onClick={() => setShowModal(false)} 
                   className="flex-1 h-12 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-all"

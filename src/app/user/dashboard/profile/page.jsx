@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   User,
   Mail,
   Phone,
   MapPin,
   Calendar,
-  Heart,
-  Activity,
   Edit,
   Save,
-  X,
   ChevronLeft,
-  Camera,
   CheckCircle,
+  Activity,
+  FileText,
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -25,14 +24,16 @@ export default function ProfilePage() {
   const [profileData, setProfileData] = useState({
     name: "Maram Kalpana",
     email: "maram@eashaop.com",
-    phone: "+91 98765 43210",
+    phone: "+918374257687",
     location: "Hyderabad, Telangana",
-    bloodGroup: "O+",
-    age: "28",
+    age: "21",
     dob: "15 May 1998",
     gender: "Female",
-    emergencyContact: "+91 98765 43211",
-    emergencyName: "Ramesh (Father)",
+    height: "165",
+    weight: "58",
+    languagePreferred: "Telugu",
+    aadhaarNumber: "XXXX-XXXX-XXXX",
+    healthConditions: "",
     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
   });
 
@@ -97,16 +98,16 @@ export default function ProfilePage() {
           <div className="relative px-6 pb-6">
             <div className="flex justify-between items-end -mt-12">
               <div className="relative">
-                <img
-                  src={profileData.avatar}
-                  alt={profileData.name}
-                  className="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover"
-                />
-                {isEditing && (
-                  <button className="absolute bottom-0 right-0 bg-[#00A99D] p-1.5 rounded-full text-white hover:bg-[#009488] transition">
-                    <Camera className="w-3.5 h-3.5" />
-                  </button>
-                )}
+                <div className="w-24 h-24 rounded-full border-4 border-white shadow-md overflow-hidden">
+                  <Image
+                    src={profileData.avatar}
+                    alt={profileData.name}
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-cover"
+                    unoptimized
+                  />
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-xs text-slate-400">Member since</p>
@@ -222,6 +223,20 @@ export default function ProfilePage() {
                 )}
               </div>
               <div>
+                <label className="block text-xs text-slate-500 mb-1">Age</label>
+                {!isEditing ? (
+                  <p className="text-sm text-slate-800">{profileData.age} years</p>
+                ) : (
+                  <input
+                    type="number"
+                    name="age"
+                    value={profileData.age}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  />
+                )}
+              </div>
+              <div>
                 <label className="block text-xs text-slate-500 mb-1">Gender</label>
                 {!isEditing ? (
                   <p className="text-sm text-slate-800">{profileData.gender}</p>
@@ -239,41 +254,70 @@ export default function ProfilePage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-slate-500 mb-1">Age</label>
+                <label className="block text-xs text-slate-500 mb-1">Height (cm)</label>
                 {!isEditing ? (
-                  <p className="text-sm text-slate-800">{profileData.age} years</p>
+                  <p className="text-sm text-slate-800">{profileData.height} cm</p>
                 ) : (
                   <input
                     type="number"
-                    name="age"
-                    value={profileData.age}
+                    name="height"
+                    value={profileData.height}
                     onChange={handleChange}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                    placeholder="Height in cm"
                   />
                 )}
               </div>
               <div>
-                <label className="block text-xs text-slate-500 mb-1">Blood Group</label>
+                <label className="block text-xs text-slate-500 mb-1">Weight (kg)</label>
+                {!isEditing ? (
+                  <p className="text-sm text-slate-800">{profileData.weight} kg</p>
+                ) : (
+                  <input
+                    type="number"
+                    name="weight"
+                    value={profileData.weight}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                    placeholder="Weight in kg"
+                  />
+                )}
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Aadhaar Number</label>
                 {!isEditing ? (
                   <div className="flex items-center gap-2">
-                    <Heart className="w-3.5 h-3.5 text-red-500" />
-                    <p className="text-sm font-semibold text-red-600">{profileData.bloodGroup}</p>
+                    <FileText className="w-3.5 h-3.5 text-slate-400" />
+                    <p className="text-sm text-slate-800">{profileData.aadhaarNumber}</p>
                   </div>
                 ) : (
+                  <input
+                    type="text"
+                    name="aadhaarNumber"
+                    value={profileData.aadhaarNumber}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                    placeholder="Aadhaar Number"
+                  />
+                )}
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Language Preferred</label>
+                {!isEditing ? (
+                  <p className="text-sm text-slate-800">{profileData.languagePreferred}</p>
+                ) : (
                   <select
-                    name="bloodGroup"
-                    value={profileData.bloodGroup}
+                    name="languagePreferred"
+                    value={profileData.languagePreferred}
                     onChange={handleChange}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
                   >
-                    <option>A+</option>
-                    <option>A-</option>
-                    <option>B+</option>
-                    <option>B-</option>
-                    <option>O+</option>
-                    <option>O-</option>
-                    <option>AB+</option>
-                    <option>AB-</option>
+                    <option>Telugu</option>
+                    <option>Hindi</option>
+                    <option>English</option>
+                    <option>Tamil</option>
+                    <option>Kannada</option>
+                    <option>Malayalam</option>
                   </select>
                 )}
               </div>
@@ -281,47 +325,30 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Emergency Contact */}
+        {/* Health Conditions Block (Same style as Emergency block was) */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6">
           <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
             <h3 className="font-semibold text-[#013A63] text-sm flex items-center gap-2">
-              <Activity className="w-4 h-4 text-red-500" />
-              Emergency Contact
+              <Activity className="w-4 h-4 text-[#00A99D]" />
+              Existing Health Conditions
             </h3>
           </div>
-          <div className="p-5 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-slate-500 mb-1">Contact Name</label>
-                {!isEditing ? (
-                  <p className="text-sm text-slate-800">{profileData.emergencyName}</p>
-                ) : (
-                  <input
-                    type="text"
-                    name="emergencyName"
-                    value={profileData.emergencyName}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
-                  />
-                )}
-              </div>
-              <div>
-                <label className="block text-xs text-slate-500 mb-1">Emergency Phone</label>
-                {!isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    <p className="text-sm text-slate-800">{profileData.emergencyContact}</p>
-                  </div>
-                ) : (
-                  <input
-                    type="tel"
-                    name="emergencyContact"
-                    value={profileData.emergencyContact}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
-                  />
-                )}
-              </div>
+          <div className="p-5">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Health Conditions</label>
+              {!isEditing ? (
+                <p className="text-sm text-slate-800">{profileData.healthConditions || "None"}</p>
+              ) : (
+                <input
+                  type="text"
+                  name="healthConditions"
+                  value={profileData.healthConditions}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-[#00A99D] text-sm"
+                  placeholder="e.g., BP, measles, influenza"
+                />
+              )}
+              <p className="text-[10px] text-slate-400 mt-1">e.g., BP, measles, influenza</p>
             </div>
           </div>
         </div>

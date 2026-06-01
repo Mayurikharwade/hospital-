@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 
 import {
   LayoutDashboard,
@@ -98,6 +99,18 @@ function SidebarGroup({ group, collapsed, isOpen, onToggle }) {
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when clicking outside or on resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const navGroups = [
     {
@@ -177,72 +190,103 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     }));
   };
 
+  // Mobile menu toggle
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Close menu when link is clicked
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
-    <aside
-      className={`sticky top-0 h-screen flex flex-col bg-[#1e293b] border-r border-white/10 transition-all duration-300 ${
-        collapsed ? "w-[45px]" : "w-[200px]"
-      }`}
-    >
-      {/* Logo Section */}
-      <div className="h-14 flex items-center px-3 border-b border-white/10">
-        <Link href="/user/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 shadow-md overflow-hidden">
-            <Image
-              src="/eAshalogo.png"
-              alt="eAshaop"
-              width={24}
-              height={24}
-              className="object-contain"
-              priority
-            />
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <span className="font-bold text-sm text-white" style={{ fontFamily: "Inter, sans-serif" }}>
-                eAshaop
-              </span>
-              <span className="text-[8px] text-[#00A99D] -mt-0.5">Healthcare</span>
+    <>
+      {/* Mobile Menu Button - Floating */}
+      <button
+        onClick={toggleMobileMenu}
+        className="md:hidden fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#00A99D] text-white shadow-lg flex items-center justify-center hover:bg-[#008b7a] transition-all duration-300"
+      >
+        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      {/* Overlay for mobile */}
+      {isMobileMenuOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Desktop & Mobile */}
+      <aside
+        className={`fixed md:sticky top-0 h-screen flex flex-col bg-[#1e293b] border-r border-white/10 transition-all duration-300 z-40
+          ${collapsed ? "w-[45px]" : "w-[200px]"}
+          md:translate-x-0
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+        {/* Logo Section */}
+        <div className="h-14 flex items-center px-3 border-b border-white/10">
+          <Link href="/user/dashboard" className="flex items-center gap-2" onClick={handleLinkClick}>
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 shadow-md overflow-hidden">
+              <Image
+                src="/eAshalogo.png"
+                alt="eAshaop Logo"
+                width={24}
+                height={24}
+                className="object-contain"
+                priority
+              />
             </div>
-          )}
-        </Link>
-      </div>
+            {!collapsed && (
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-white">
+                  eAshaop
+                </span>
+                <span className="text-[8px] text-[#00A99D] -mt-0.5">Healthcare</span>
+              </div>
+            )}
+          </Link>
+        </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 py-3 px-2 overflow-y-auto overflow-x-hidden sidebar-scroll">
-        {navGroups.map((group) => (
-          <SidebarGroup
-            key={group.label}
-            group={group}
-            collapsed={collapsed}
-            isOpen={openGroups[group.label]}
-            onToggle={() => toggleGroup(group.label)}
-          />
-        ))}
-      </nav>
+        {/* Navigation */}
+        <nav className="flex-1 py-3 px-2 overflow-y-auto overflow-x-hidden sidebar-scroll">
+          {navGroups.map((group) => (
+            <SidebarGroup
+              key={group.label}
+              group={group}
+              collapsed={collapsed}
+              isOpen={openGroups[group.label]}
+              onToggle={() => toggleGroup(group.label)}
+            />
+          ))}
+        </nav>
 
-      {/* Expand/Collapse Button */}
-      <div className="py-2 border-t border-white/10 flex justify-center">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-6 h-6 flex items-center justify-center rounded-md text-white/50 hover:bg-white/10 hover:text-white transition-all duration-300"
-        >
-          {collapsed ? (
-            <ChevronRight className="w-3.5 h-3.5" />
-          ) : (
-            <ChevronLeft className="w-3.5 h-3.5" />
-          )}
-        </button>
-      </div>
+        {/* Expand/Collapse Button - Hidden on mobile */}
+        <div className="py-2 border-t border-white/10 hidden md:flex justify-center">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="w-6 h-6 flex items-center justify-center rounded-md text-white/50 hover:bg-white/10 hover:text-white transition-all duration-300"
+          >
+            {collapsed ? (
+              <ChevronRight className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronLeft className="w-3.5 h-3.5" />
+            )}
+          </button>
+        </div>
 
-      <style jsx>{`
-        .sidebar-scroll::-webkit-scrollbar {
-          display: none;
-        }
-        .sidebar-scroll {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </aside>
+        <style jsx>{`
+          .sidebar-scroll::-webkit-scrollbar {
+            display: none;
+          }
+          .sidebar-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
+      </aside>
+    </>
   );
-}
+} 

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { Heart, Brain, Bone, Microscope, Activity, Sparkles, ArrowRight, Star, Clock, Users, Award } from "lucide-react";
 
 const centres = [
@@ -134,10 +135,13 @@ export default function CentresOfExcellence() {
                 {centre.desc}
               </p>
               
-              {/* Explore Link */}
-              <button className="flex items-center gap-1 text-[#00A99D] text-sm font-medium mt-3 group-hover:gap-2 transition-all">
+              {/* Explore Department Link - Redirect to Login */}
+              <Link 
+                href="/login" 
+                className="inline-flex items-center gap-1 text-[#00A99D] text-sm font-medium mt-3 group-hover:gap-2 transition-all"
+              >
                 Explore Department <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
             </div>
           </div>
         ))}

@@ -14,7 +14,6 @@ export default function DoctorsCTA() {
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
       number: '01',
-      link: '/doctors',
     },
     {
       title: 'Check Profile & Reviews',
@@ -24,7 +23,6 @@ export default function DoctorsCTA() {
       bgColor: 'bg-green-50',
       iconColor: 'text-green-600',
       number: '02',
-      link: '/doctors',
     },
     {
       title: 'Book Appointment',
@@ -34,15 +32,14 @@ export default function DoctorsCTA() {
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
       number: '03',
-      link: '/doctors',
     },
   ];
 
   const features = [
-    { icon: Shield, text: "100% Verified Doctors", color: "text-emerald-600", link: "/doctors" },
-    { icon: Video, text: "Online Consultation", color: "text-blue-600", link: "/doctors" },
-    { icon: Clock, text: "24/7 Emergency Support", color: "text-amber-600", link: "/doctors" },
-    { icon: Sparkles, text: "Secure & Confidential", color: "text-purple-600", link: "/doctors" },
+    { icon: Shield, text: "100% Verified Doctors", color: "text-emerald-600" },
+    { icon: Video, text: "Online Consultation", color: "text-blue-600" },
+    { icon: Clock, text: "24/7 Emergency Support", color: "text-amber-600" },
+    { icon: Sparkles, text: "Secure & Confidential", color: "text-purple-600" },
   ];
 
   return (
@@ -63,12 +60,12 @@ export default function DoctorsCTA() {
           </p>
         </div>
 
-        {/* Steps Grid - Using Link from Next.js */}
+        {/* Steps Grid - All redirect to Login */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {steps.map((step, index) => (
             <Link 
               key={index} 
-              href={step.link}
+              href="/login"
               className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-slate-100 cursor-pointer block"
             >
               <div className="absolute top-4 right-4 text-5xl font-bold text-slate-100 group-hover:text-[#00A99D]/10 transition-colors duration-300">
@@ -86,12 +83,12 @@ export default function DoctorsCTA() {
           ))}
         </div>
 
-        {/* Trust Badges - Clickable Links */}
+        {/* Trust Badges - Clickable Links to Login */}
         <div className="flex flex-wrap justify-center gap-6 pt-6 border-t border-slate-200">
           {features.map((feature, idx) => (
             <Link 
               key={idx} 
-              href={feature.link}
+              href="/login"
               className="flex items-center gap-2 hover:scale-105 transition-transform duration-200 cursor-pointer"
             >
               <feature.icon className={`w-4 h-4 ${feature.color}`} />
@@ -100,10 +97,10 @@ export default function DoctorsCTA() {
           ))}
         </div>
 
-        {/* Final CTA Button */}
+        {/* Final CTA Button - Redirect to Login */}
         <div className="text-center mt-8">
           <Link 
-            href="/doctors"
+            href="/login"
             className="inline-block px-8 py-3 bg-gradient-to-r from-[#00A99D] to-[#009488] text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
           >
             Get Started Now → 
